@@ -9,8 +9,13 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "test": "vitest"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "bun-types": "^1.2.21",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "typescript": "^5"

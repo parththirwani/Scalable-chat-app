@@ -1,19 +1,30 @@
-import WebSocket, { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from "ws"
 
-const wss = new WebSocketServer({ port: 8080 });
-
-interface room{
+interface Room {
   sockets: WebSocket[]
 }
 
-const rooms: Record<string, room> = {}
+const rooms: Record<string, Room> = {}
 
-wss.on('connection', function connection(ws) {
-  ws.on('error', console.error);
+export const wss = new WebSocketServer({ port: 8080 })
 
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
-  });
+wss.on("connection", (ws) => {
+  ws.on("error", console.error)
 
-  ws.send('something');
-});
+  ws.on("message", (data) => {
+    const parsedData = JSON.parse(data.toString())
+
+    if (parsedData.type === "join-room") {
+      const room = parsedData.room
+      if (!rooms[room]) {
+        rooms[room] = { sockets: [] }
+      }
+      rooms[room].sockets.push(ws)
+    }
+
+    if (parsedData.type === "chat") {
+      const room = parsedData.room
+      rooms[room]?.sockets.forEach((socket) => socket.send(data.toString()))
+    }
+  })
+})
