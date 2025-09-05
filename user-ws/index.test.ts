@@ -1,12 +1,13 @@
 import { test, describe, expect } from "vitest"
 import WebSocket from "ws"
 
-const BACKEND_URL = "ws://localhost:8080"
+const BACKEND_URL1 = "ws://localhost:8080"
+const BACKEND_URL2 = "ws://localhost:8081"
 
 describe("Chat Application", () => {
     test("Message sent from room 1 reaches another participant in room 1", async () => {
-        const ws1 = new WebSocket(BACKEND_URL)
-        const ws2 = new WebSocket(BACKEND_URL)
+        const ws1 = new WebSocket(BACKEND_URL1)
+        const ws2 = new WebSocket(BACKEND_URL2)
 
         // Wait for both sockets to open
         await Promise.all([
@@ -26,6 +27,7 @@ describe("Chat Application", () => {
             room: "Room 1"
         }))
 
+
         // message listener before sending
         const messagePromise = new Promise<void>((resolve) => {
             ws2.onmessage = ({ data }) => {
@@ -36,6 +38,7 @@ describe("Chat Application", () => {
             }
         })
 
+                        console.log('control')
         // Send chat message
         ws1.send(JSON.stringify({
             type: "chat",
